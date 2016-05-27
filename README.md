@@ -25,7 +25,7 @@ gulp.task('scripts', function(){
     preview:true, // extra option
     outDir:'bundle', // extra option
     suffix:'.min' // extra option
-  })).pipe(gulp.dest('static/scripts'));
+  }));
 });
 ```
 

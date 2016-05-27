@@ -34,11 +34,12 @@ function exec(opts, file, callback){
   var extension = path.extname(file.path);
   var name = path.basename(file.path, extension);
   var directory = path.dirname(file.path, extension);
+  var dest = typeof opts.outDir === 'string'? opts.outDir : '';
   var suffix = typeof opts.suffix === 'string'? opts.suffix : '.bundle';
   var fileExclusionRegExp = new RegExp('(\\'+ suffix +'\\'+ extension +')$');
   var baseUrl = path.relative('./', directory);
   var mainConfigFile = path.join(baseUrl, name + extension);
-  var out = path.join(baseUrl, name + suffix + extension);
+  var out = path.join(baseUrl, dest, name + suffix + extension);
   if(fileExclusionRegExp.test(file.path)) return void(0);
   opts = Object.assign({
     out:out,

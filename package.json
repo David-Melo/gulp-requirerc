@@ -1,0 +1,40 @@
+{
+  "name": "gulp-requirerc",
+  "main": "index.js",
+  "version": "0.0.1",
+  "description": "Gulp adapter for RequireJS",
+  "license": "MIT",
+  "homepage": "https://github.com/adriancmiranda/gulp-requirerc",
+  "author": {
+    "name": "Adrian C. Miranda",
+    "url": "https://github.com/adriancmiranda"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/adriancmiranda/gulp-requirerc.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adriancmiranda/gulp-requirerc/issues"
+  },
+  "dependencies": {
+    "event-stream": "latest",
+    "requirejs": "latest"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "gulp",
+    "rjs",
+    "r.js",
+    "amd",
+    "requirejs",
+    "require.js",
+    "require",
+    "optimizer",
+    "gulp-rjs",
+    "gulp-require",
+    "gulp-requirejs",
+    "gulp-requirerc"
+  ]
+}

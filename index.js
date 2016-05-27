@@ -36,12 +36,14 @@ function exec(opts, file, callback){
   var directory = path.dirname(file.path, extension);
   var name = path.basename(file.path, extension);
   var out = path.join(opts.baseUrl, name + bundleType + extension);
+  var fileExclusionRegExp = new RegExp('(\\'+ bundleType +'\\'+ extension +')$');
+  if(fileExclusionRegExp.test(file.path)) return void(0);
   opts = Object.assign({
     out:out,
     name:name,
     baseUrl:path.relative('./', directory),
     mainConfigFile:path.join(directory, name + extension),
-    fileExclusionRegExp:new RegExp('(\\'+ bundleType +'\\'+ extension +')$')
+    fileExclusionRegExp:fileExclusionRegExp
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
   opts.preview && console.log(cmd('node r.js -o', opts));

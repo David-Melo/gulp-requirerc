@@ -21,3 +21,8 @@ gulp.task('scripts', function(){
 });
 ```
 
+## Dependencies
+
+* [event-stream](https://www.npmjs.com/package/event-stream)
+* [requirejs](https://www.npmjs.com/package/requirejs)
+

@@ -16,7 +16,12 @@ var requirerc = require('gulp-requirerc');
 
 gulp.task('scripts', function(){
   return gulp.src('source/scripts/*.js').pipe(requirerc({
-    baseUrl:'static/scripts'
+    baseUrl:'static/scripts',
+    uglify2:{ warnings:true },
+    optimize:'uglify2',
+    generateSourceMaps:true,
+    preview:true,
+    suffix:'.bundle'
   })).pipe(gulp.dest('static/scripts'));
 });
 ```

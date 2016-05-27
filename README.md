@@ -4,7 +4,7 @@
 ## Installation
 
 ```terminal
-npm install --save-dev gulp-requirerc
+npm install --save-dev adriancmiranda/gulp-requirerc
 ````
 
 ## Usage

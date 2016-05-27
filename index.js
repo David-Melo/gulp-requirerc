@@ -17,11 +17,11 @@ var eventStream = require('event-stream');
 var requirejs = require('requirejs');
 
 // Method that helps to assemble the call and parameters for debugging.
-function cmd(call, options){
+function cmd(call, opts){
   call = [call];
-  for(var key in options){
-    if(options.hasOwnProperty(key)){
-      call.push([key,'=', JSON.stringify(options[key])].join(''));
+  for(var key in opts){
+    if(opts.hasOwnProperty(key)){
+      call.push([key,'=', JSON.stringify(opts[key])].join(''));
     }
   }
   return call.join(' ');
@@ -29,25 +29,49 @@ function cmd(call, options){
 
 // Documentation from RequireJS in node.
 // @see http://requirejs.org/docs/node.html
-function exec(options, file, callback){
-  var name = path.basename(file.path).replace(path.extname(file.path), '');
-  var outPath = path.join(options.baseUrl, name + '.js');
-  options = Object.assign({ name:name, out:outPath }, options);
-  options.preview && console.log(cmd('node r.js -o', options));
-  requirejs.optimize(options);
+function exec(opts, file, callback){
+  var optimize = !/undefined|none/.test(String(opts.optimize));
+  var bundleType = optimize? '.min' : '.bundle';
+  var extension = path.extname(file.path);
+  var directory = path.dirname(file.path, extension);
+  var name = path.basename(file.path, extension);
+  var out = path.join(opts.baseUrl, name + bundleType + extension);
+  opts = Object.assign({
+    out:out,
+    name:name,
+    baseUrl:path.relative('./', directory),
+    mainConfigFile:path.join(directory, name + extension),
+    fileExclusionRegExp:new RegExp('(\\'+ bundleType +'\\'+ extension +')$')
+  }, opts);
+  Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
+  opts.preview && console.log(cmd('node r.js -o', opts));
+  requirejs.optimize(opts);
 }
 
 // File I/O is provided by simple wrappers around standard POSIX functions.
 // @see https://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options
 // @see https://nodejs.org/api/fs.html#fs_class_fs_writestream
-function writeStream(options, file, callback){
-  var dest = path.join(file.cwd, options.baseUrl, path.basename(file.path));
+function writeStream(opts, file, callback){
+  var dest = path.join(file.cwd, opts.baseUrl, path.basename(file.path));
   var stream = fs.createWriteStream(dest, { flags:'w' });
-  stream.write(file.contents, '', exec.bind(this, options, file, callback));
+  stream.write(file.contents, '', exec.bind(this, opts, file, callback));
 }
 
 // All configuration options.
 // @see https://github.com/requirejs/r.js/blob/master/build/example.build.js
-module.exports = function(options){
-  return eventStream.mapSync(writeStream.bind(this, options));
+function requirerc(opts){
+  opts = Object.assign({}, opts);
+  opts.baseUrl = opts.baseUrl || './';
+  return eventStream.mapSync(writeStream.bind(this, opts));
+}
+
+// Externalize dependencies.
+requirerc.utils = {
+  fs:fs,
+  path:path,
+  eventStream:eventStream,
+  requirejs:requirejs
 };
+
+// Externalize `gulp-requirerc` module.
+module.exports = requirerc;

@@ -31,18 +31,20 @@ function cmd(call, opts){
 // @see http://requirejs.org/docs/node.html
 function exec(opts, file, callback){
   var optimize = !/undefined|none/.test(String(opts.optimize));
-  var bundleType = optimize? '.min' : '.bundle';
   var extension = path.extname(file.path);
-  var directory = path.dirname(file.path, extension);
   var name = path.basename(file.path, extension);
-  var out = path.join(opts.baseUrl, name + bundleType + extension);
+  var directory = path.dirname(file.path, extension);
+  var bundleType = optimize? '.min' : '.bundle';
   var fileExclusionRegExp = new RegExp('(\\'+ bundleType +'\\'+ extension +')$');
+  var baseUrl = path.relative('./', directory);
+  var mainConfigFile = path.join(baseUrl, name + extension);
+  var out = path.join(baseUrl, name + bundleType + extension);
   if(fileExclusionRegExp.test(file.path)) return void(0);
   opts = Object.assign({
     out:out,
     name:name,
-    baseUrl:path.relative('./', directory),
-    mainConfigFile:path.join(directory, name + extension),
+    baseUrl:baseUrl,
+    mainConfigFile:mainConfigFile,
     fileExclusionRegExp:fileExclusionRegExp
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);

@@ -23,10 +23,31 @@ gulp.task('scripts', function(){
     optimize:'uglify2',
     generateSourceMaps:true,
     preview:true, // extra option
-    suffix:'.bundle' // extra option
+    outDir:'bundle', // extra option
+    suffix:'.min' // extra option
   })).pipe(gulp.dest('static/scripts'));
 });
 ```
+
+#### options
+Type: `Object`
+
+
+##### options.preview
+Type: `Boolean`
+Default: `true`
+
+
+
+##### options.outDir
+Type: `string`
+Default: `''`
+
+
+##### options.suffix
+Type: `string`
+Default: `'.bundle'`
+
 
 ## Dependencies
 

@@ -53,18 +53,18 @@ gulp.task('scripts', function(){
 });
 ```
 
-#### options
+### options
 Type: `Object`
 
-##### options.preview
+#### options.preview
 Type: `Boolean`
 Default: `true`
 
-##### options.outDir
+#### options.outDir
 Type: `string`
 Default: `''`
 
-##### options.suffix
+#### options.suffix
 Type: `string`
 Default: `'.bundle'`
 

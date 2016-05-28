@@ -19,8 +19,16 @@
 
 ## Installation
 
+from [github](https://github.com/adriancmiranda/gulp-requirerc "Github"):
+
 ```terminal
-npm install --save-dev adriancmiranda/gulp-requirerc
+npm i -D adriancmiranda/gulp-requirerc
+````
+
+from [npmjs](https://www.npmjs.com/package/gulp-requirerc "NPM"):
+
+```terminal
+npm i -D gulp-requirerc
 ````
 
 ## Usage
@@ -70,3 +78,6 @@ Default: `'.bundle'`
 * [event-stream](https://www.npmjs.com/package/event-stream)
 * [requirejs](https://www.npmjs.com/package/requirejs)
 
+
+## License
+[MIT](https://github.com/adriancmiranda/gulp-requirerc/blob/master/LICENSE "MIT LICENSE")

@@ -1,6 +1,22 @@
 # gulp-requirerc
 > Gulp adapter for RequireJS
 
+[![dependencies status][david_dependencies_status_image]][david_dependencies_status_url] 
+[![devDependency status][david_devdependencies_status_image]][david_devdependencies_status_url]
+
+<!-- david dependencies -->
+[david_dependencies_status_image]: https://david-dm.org/adriancmiranda/gulp-requirerc.png?theme=shields.io
+[david_dependencies_status_url]: https://david-dm.org/adriancmiranda/gulp-requirerc "dependencies status"
+
+<!-- david devDependencies -->
+[david_devdependencies_status_image]: https://david-dm.org/adriancmiranda/gulp-requirerc/dev-status.png?theme=shields.io
+[david_devdependencies_status_url]: https://david-dm.org/adriancmiranda/gulp-requirerc#info=devDependencies "devDependencies status"
+
+<!-- sourcegraph - views -->
+[sourcegraph_views_image]: https://sourcegraph.com/api/repos/github.com/adriancmiranda/gulp-requirerc/counters/views.png
+[sourcegraph_views_url]: https://sourcegraph.com/github.com/adriancmiranda/gulp-requirerc "views"
+
+
 ## Installation
 
 ```terminal

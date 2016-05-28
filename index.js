@@ -71,11 +71,11 @@ function requirerc(opts){
 }
 
 // Externalize dependencies.
-requirerc.utils = {
+requirerc.util = {
   fs:fs,
   path:path,
   eventStream:eventStream,
-  requirejs:requirejs
+  r:requirejs
 };
 
 // Externalize `gulp-requirerc` module.

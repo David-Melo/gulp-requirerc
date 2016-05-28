@@ -56,27 +56,17 @@ gulp.task('scripts', function(){
 #### options
 Type: `Object`
 
-
 ##### options.preview
 Type: `Boolean`
 Default: `true`
-
-
 
 ##### options.outDir
 Type: `string`
 Default: `''`
 
-
 ##### options.suffix
 Type: `string`
 Default: `'.bundle'`
-
-
-## Dependencies
-
-* [event-stream](https://www.npmjs.com/package/event-stream)
-* [requirejs](https://www.npmjs.com/package/requirejs)
 
 
 ## License

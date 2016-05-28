@@ -48,7 +48,7 @@ gulp.task('scripts', function(){
     generateSourceMaps:true,
     preview:true, // extra option
     outDir:'bundle', // extra option
-    suffix:'.min' // extra option
+    outSuffix:'.min' // extra option
   }));
 });
 ```

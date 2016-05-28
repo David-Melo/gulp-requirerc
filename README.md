@@ -33,7 +33,7 @@ npm i -D gulp-requirerc
 
 ## Usage
 
-```node
+```javascript
 // Gulp adapter for RequireJS
 // @see https://github.com/adriancmiranda/gulp-requirerc
 var requirerc = require('gulp-requirerc');

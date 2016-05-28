@@ -53,7 +53,7 @@ gulp.task('scripts', function(){
 });
 ```
 
-### options
+### Options
 Type: `Object`
 
 #### options.preview

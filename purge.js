@@ -1,12 +1,31 @@
 'use strict';
 
-var removeUseStrict = function(str){
+var stripUseStrict = function(str){
   return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
+};
+
+var stripModuleReturn = function(str){
+  return str;
+};
+
+var stripModuleClosure = function(str){
+  return str;
+};
+
+var stripDefineStatement = function(str){
+  return str;
+};
+
+var replaceInstructionBlock = function(str, opts){
+  return str;
 };
 
 module.exports = {
   build:function(debug, name, url, code){
-    code = removeUseStrict(code);
+    code = replaceInstructionBlock(code, { start:'RCExcludeStart', end:'RCExcludeEnd' });
+    code = stripUseStrict(code);
+    code = stripModuleReturn(code);
+    code = stripModuleClosure(code);
     return code;
   },
 

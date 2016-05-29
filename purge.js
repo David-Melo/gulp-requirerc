@@ -39,6 +39,14 @@ var getClosure = function(str, opts){
   return execContents(str, opts)[3] || '';
 };
 
+var findRequireMethodBlock = function(fn, str, opts){
+  return fn(str, Object.assign({
+    start:'require\\s*\\(\\s*[^{]*?\\{',
+    end:'\\}\\s*\\)\\s*;?',
+    flags:'g'
+  }, opts));
+};
+
 var findDefineMethodBlock = function(fn, str, opts){
   return fn(str, Object.assign({
     start:'define\\s*\\(\\s*[^{]*?\\{',

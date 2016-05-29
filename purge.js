@@ -1,7 +1,12 @@
 'use strict';
 
+var removeUseStrict = function(str){
+  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
+};
+
 module.exports = {
   build:function(debug, name, url, code){
+    code = removeUseStrict(code);
     return code;
   },
 

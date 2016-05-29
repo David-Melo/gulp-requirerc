@@ -27,6 +27,16 @@ function cmd(call, opts){
   return call.join(' ');
 }
 
+// AMD builder
+function build(name, path, contents){
+  return contents;
+}
+
+// AMD cleaner
+function purge(opts, dirtyc, name, path, contents){
+  return dirtyc;
+}
+
 // Documentation from RequireJS in node.
 // @see http://requirejs.org/docs/node.html
 function exec(opts, file, callback){
@@ -46,7 +56,11 @@ function exec(opts, file, callback){
     name:name,
     baseUrl:baseUrl,
     mainConfigFile:mainConfigFile,
-    fileExclusionRegExp:fileExclusionRegExp
+    fileExclusionRegExp:fileExclusionRegExp,
+    onBuildWrite:function(name, path, contents){
+      var dirty = opts.onBuildWrite(name, path, contents);
+      return opts.purge? purge(dirty, name, path, contents) : dirty;
+    }
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
   opts.preview && console.log(cmd('node r.js -o', opts));
@@ -67,6 +81,7 @@ function writeStream(opts, file, callback){
 function requirerc(opts){
   opts = Object.assign({}, opts);
   opts.baseUrl = opts.baseUrl || './';
+  opts.onBuildWrite = typeof opts.onBuildWrite === 'function'? opts.onBuildWrite : build;
   return eventStream.mapSync(writeStream.bind(this, opts));
 }
 

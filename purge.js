@@ -7,8 +7,7 @@ var store = function(fn, value){
 };
 
 var stripUseStrict = function(str){
-  str = str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
-  return store(stripUseStrict, str);
+  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
 };
 
 var stripModuleReturn = function(str){

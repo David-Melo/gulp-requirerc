@@ -30,17 +30,6 @@ function cmd(call, opts){
   return call.join(' ');
 }
 
-// AMD build
-function build(name, path, contents){
-  return amdel.build(name, path, contents);
-}
-
-// AMD cleaner
-function purge(file){
-  var out = fs.readFileSync(file.path, { encoding:'utf8' });
-  fs.writeFileSync(file.path, amdel.bundle(out));
-}
-
 // Documentation from RequireJS in node.
 // @see http://requirejs.org/docs/node.html
 function exec(opts, file, callback){
@@ -54,10 +43,11 @@ function exec(opts, file, callback){
   var baseUrl = path.relative('./', directory);
   var mainConfigFile = path.join(baseUrl, name + extension);
   var out = path.join(baseUrl, dest, name + suffix + extension);
-  var onWrite = opts.onBuildWrite;
   var onBundled = opts.onModuleBundleComplete;
+  var onWrite = opts.onBuildWrite;
   if(fileExclusionRegExp.test(file.path)) return void(0);
   delete(opts.onModuleBundleComplete);
+  delete(opts.onBuildWrite);
   opts = Object.assign({
     out:out,
     name:name,
@@ -68,10 +58,10 @@ function exec(opts, file, callback){
       if(typeof onWrite === 'function'){
         contents = onWrite(name, path, contents);
       }
-      return opts.purge? build(contents) : contents;
+      return opts.purge? amdel.build(opts.preview, name, path, contents) : contents;
     },
     onModuleBundleComplete:function(file){
-      return opts.purge? purge(file) : onBundled(file);
+      return opts.purge? amdel.bundle(fs, file) : onBundled(file);
     }
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);

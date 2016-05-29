@@ -13,7 +13,7 @@ var escapeRegExp = function(str){
 var contentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
-  var expression = start +'((?:.|\\n)*)'+ end;
+  var expression = '('+ start +')((?:.|\\n)*)('+ end +')';
   return new RegExp(expression, opts.flags);
 };
 
@@ -40,24 +40,24 @@ var getClosure = function(str, opts){
 
 var getDefineStatement = function(str){
   return getStatement(str, {
-    start:'(define\\s*\\(\\s*[^{]*?\\{)',
-    end:'(\\}\\s*\\)\\s*;?)',
+    start:'define\\s*\\(\\s*[^{]*?\\{',
+    end:'\\}\\s*\\)\\s*;?',
     flags:'g'
   });
 };
 
 var getDefineContent = function(str){
   return getContent(str, {
-    start:'(define\\s*\\(\\s*[^{]*?\\{)',
-    end:'(\\}\\s*\\)\\s*;?)',
+    start:'define\\s*\\(\\s*[^{]*?\\{',
+    end:'\\}\\s*\\)\\s*;?',
     flags:'g'
   });
 };
 
 var getDefineClosure = function(str){
   return getClosure(str, {
-    start:'(define\\s*\\(\\s*[^{]*?\\{)',
-    end:'(\\}\\s*\\)\\s*;?)',
+    start:'define\\s*\\(\\s*[^{]*?\\{',
+    end:'\\}\\s*\\)\\s*;?',
     flags:'g'
   });
 };

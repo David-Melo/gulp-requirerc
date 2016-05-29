@@ -23,7 +23,7 @@ var getContents = function(str, opts){
 };
 
 var stripUseStrict = function(str){
-  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
+  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/gi, '');
 };
 
 var stripModuleReturn = function(str){

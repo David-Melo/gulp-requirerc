@@ -95,7 +95,8 @@ var stripBlockReturns = function(str){
 };
 
 var replaceInstructionBlock = function(str, sub, opts){
-  return store(replaceInstructionBlock, str);
+  store(replaceInstructionBlock, { str:str, sub:sub, opts:opts });
+  return str;
 };
 
 module.exports = {

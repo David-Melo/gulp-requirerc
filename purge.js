@@ -13,7 +13,7 @@ var escapeRegExp = function(str){
 var getContentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
-  return new RegExp('\\s*'+ start +'(.+)'+ end);
+  return new RegExp('\\s*'+ start +'([\\s\\S]*?)'+ end, opts.flags);
 };
 
 var getContents = function(str, opts){

@@ -1,5 +1,8 @@
 'use strict';
 
+// Wiper.
+var amdel = require('./amdel');
+
 // File I/O is provided by simple wrappers around standard POSIX functions.
 // @see https://nodejs.org/api/fs.html
 var fs = require('fs');
@@ -27,11 +30,15 @@ function cmd(call, opts){
   return call.join(' ');
 }
 
+// AMD build
+function build(name, path, contents){
+  return amdel.build(name, path, contents);
+}
+
 // AMD cleaner
 function purge(file){
-  var amdel = require('./amdel');
-  var out = fs.readFileSync(file.path, { encoding:'utf8' })
-  fs.writeFileSync(file.path, amdel(out));
+  var out = fs.readFileSync(file.path, { encoding:'utf8' });
+  fs.writeFileSync(file.path, amdel.bundle(out));
 }
 
 // Documentation from RequireJS in node.
@@ -47,7 +54,8 @@ function exec(opts, file, callback){
   var baseUrl = path.relative('./', directory);
   var mainConfigFile = path.join(baseUrl, name + extension);
   var out = path.join(baseUrl, dest, name + suffix + extension);
-  var bundled = opts.onModuleBundleComplete;
+  var onWrite = opts.onBuildWrite;
+  var onBundled = opts.onModuleBundleComplete;
   if(fileExclusionRegExp.test(file.path)) return void(0);
   delete(opts.onModuleBundleComplete);
   opts = Object.assign({
@@ -56,8 +64,14 @@ function exec(opts, file, callback){
     baseUrl:baseUrl,
     mainConfigFile:mainConfigFile,
     fileExclusionRegExp:fileExclusionRegExp,
+    onBuildWrite:function(name, path, contents){
+      if(typeof onWrite === 'function'){
+        contents = onWrite(name, path, contents);
+      }
+      return opts.purge? build(contents) : contents;
+    },
     onModuleBundleComplete:function(file){
-      return opts.purge? purge(file) : bundled(file);
+      return opts.purge? purge(file) : onBundled(file);
     }
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);

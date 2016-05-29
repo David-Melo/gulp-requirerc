@@ -10,11 +10,17 @@ var escapeRegExp = function(str){
   return str.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
 };
 
-var blockContentsRegExp = function(opts){
+var contentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
+  var contents = opts.escape? escapeRegExp(opts.contents) : opts.contents;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
-  var expression = '('+ start +')((?:.|\\n)*)('+ end +')';
+  var expression = '('+ start +')('+ contents +')('+ end +')';
   return new RegExp(expression, opts.flags);
+};
+
+var blockContentsRegExp = function(opts){
+  opts.contents = '(?:.|\\n)*';
+  return contentsRegExp(opts);
 };
 
 var execBlockContents = function(str, opts){
@@ -54,7 +60,7 @@ var getRequireStatement = function(str){
   return findRequireMethodBlock(getBlockStatement, str);
 };
 
-var getRequireContent = function(str){
+var getRequireContents = function(str){
   return findRequireMethodBlock(getBlockContents, str);
 };
 
@@ -78,7 +84,7 @@ var getDefineStatement = function(str){
   return findDefineMethodBlock(getBlockStatement, str);
 };
 
-var getDefineContent = function(str){
+var getDefineContents = function(str){
   return findDefineMethodBlock(getBlockContents, str);
 };
 
@@ -105,12 +111,13 @@ module.exports = {
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
     code = replaceUseStrict(code, '');
     code = stripBlockReturns(code);
+    // code = getDefineContents(code);
     return code;
   },
 
   bundle:function(fs, file){
     var filepath = file.path;
-    file = fs.readFileSync(filepath, { encoding:'utf8' })
+    file = fs.readFileSync(filepath, { encoding:'utf8' });
     fs.writeFileSync(filepath, file);
     return file;
   }

@@ -38,6 +38,30 @@ var getClosure = function(str, opts){
   return execContents(str, opts)[3] || '';
 };
 
+var getDefineStatement = function(str){
+  return getClosure(str, {
+    start:'(define\\s*\\(\\s*[^{]*?\\{)',
+    end:'(\\}\\s*\\)\\s*;?)',
+    flags:'g'
+  });
+};
+
+var getDefineContent = function(str){
+  return getContent(str, {
+    start:'(define\\s*\\(\\s*[^{]*?\\{)',
+    end:'(\\}\\s*\\)\\s*;?)',
+    flags:'g'
+  });
+};
+
+var getDefineClosure = function(str){
+  return getClosure(str, {
+    start:'(define\\s*\\(\\s*[^{]*?\\{)',
+    end:'(\\}\\s*\\)\\s*;?)',
+    flags:'g'
+  });
+};
+
 var stripUseStrict = function(str){
   return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/gi, '');
 };

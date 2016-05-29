@@ -46,6 +46,22 @@ var findRequireMethodBlock = function(fn, str, opts){
   }, opts));
 };
 
+var getRequireMatch = function(str){
+  return findRequireMethodBlock(getMatch, str);
+};
+
+var getRequireStatement = function(str){
+  return findRequireMethodBlock(getStatement, str);
+};
+
+var getRequireContent = function(str){
+  return findRequireMethodBlock(getContents, str);
+};
+
+var getRequireClosure = function(str){
+  return findRequireMethodBlock(getClosure, str);
+};
+
 var findDefineMethodBlock = function(fn, str, opts){
   return fn(str, Object.assign({
     start:'define\\s*\\(\\s*[^{]*?\\{',
@@ -63,7 +79,7 @@ var getDefineStatement = function(str){
 };
 
 var getDefineContent = function(str){
-  return findDefineMethodBlock(getContent, str);
+  return findDefineMethodBlock(getContents, str);
 };
 
 var getDefineClosure = function(str){

@@ -75,7 +75,6 @@ var stripModuleClosure = function(str){
 };
 
 var stripModuleStatement = function(str){
-  // str = str.replace((define\s*\()((?:.|\n)*)(\)\s*;?), '$2');
   return store(stripDefineStatement, str);
 };
 

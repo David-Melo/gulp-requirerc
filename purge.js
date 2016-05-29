@@ -106,13 +106,9 @@ module.exports = {
     return code;
   },
 
-  readFile:function(fs, filepath){
-    return fs.readFileSync(filepath, { encoding:'utf8' });
-  },
-
   bundle:function(fs, file){
     var filepath = file.path;
-    file = this.readFile(fs, filepath);
+    file = fs.readFileSync(filepath, { encoding:'utf8' })
     fs.writeFileSync(filepath, file);
     return file;
   }

@@ -82,7 +82,7 @@ function requirerc(opts){
   opts = Object.assign({}, opts);
   opts.baseUrl = opts.baseUrl || './';
   opts.onBuildWrite = typeof opts.onBuildWrite === 'function'? opts.onBuildWrite : build;
-  opts.cjsTranslate = !!opts.purge? true : opts.cjsTranslate;
+  opts.cjsTranslate = !!opts.purge || opts.cjsTranslate;
   return eventStream.mapSync(writeStream.bind(this, opts));
 }
 

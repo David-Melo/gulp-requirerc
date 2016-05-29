@@ -39,7 +39,7 @@ var getClosure = function(str, opts){
 };
 
 var getDefineStatement = function(str){
-  return getClosure(str, {
+  return getStatement(str, {
     start:'(define\\s*\\(\\s*[^{]*?\\{)',
     end:'(\\}\\s*\\)\\s*;?)',
     flags:'g'

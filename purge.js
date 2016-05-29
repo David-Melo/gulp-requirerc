@@ -14,7 +14,6 @@ var contentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
   var expression = '('+ start +')((?:.|\\n)*)('+ end +')';
-  console.log('expression:', expression);
   return new RegExp(expression, opts.flags);
 };
 

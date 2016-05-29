@@ -38,36 +38,28 @@ var getClosure = function(str, opts){
   return execContents(str, opts)[3] || '';
 };
 
-var getDefineMatch = function(str){
-  return getMatch(str, {
+var findDefineMethodBlock = function(fn, str, opts){
+  return fn(str, Object.assign({
     start:'define\\s*\\(\\s*[^{]*?\\{',
     end:'\\}\\s*\\)\\s*;?',
     flags:'g'
-  });
+  }, opts));
+};
+
+var getDefineMatch = function(str){
+  return findDefineMethodBlock(getMatch, str);
 };
 
 var getDefineStatement = function(str){
-  return getStatement(str, {
-    start:'define\\s*\\(\\s*[^{]*?\\{',
-    end:'\\}\\s*\\)\\s*;?',
-    flags:'g'
-  });
+  return findDefineMethodBlock(getStatement, str);
 };
 
 var getDefineContent = function(str){
-  return getContent(str, {
-    start:'define\\s*\\(\\s*[^{]*?\\{',
-    end:'\\}\\s*\\)\\s*;?',
-    flags:'g'
-  });
+  return findDefineMethodBlock(getContent, str);
 };
 
 var getDefineClosure = function(str){
-  return getClosure(str, {
-    start:'define\\s*\\(\\s*[^{]*?\\{',
-    end:'\\}\\s*\\)\\s*;?',
-    flags:'g'
-  });
+  return findDefineMethodBlock(getClosure, str);
 };
 
 var stripUseStrict = function(str){

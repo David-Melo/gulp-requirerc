@@ -18,8 +18,9 @@ var getContentsRegExp = function(opts){
 };
 
 var getContents = function(str, opts){
-  str = getContentsRegExp(opts).exec(str) || [];
-  return str[2] || '';
+  var re = getContentsRegExp(opts);
+  str = (re.exec(str) || [])[2] || '';
+  return str;
 };
 
 var stripUseStrict = function(str){

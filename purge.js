@@ -6,6 +6,14 @@ var store = function(fn, value){
   return fn.storage[fn.storage.length - 1];
 };
 
+var escapeRegExp = function(str){
+  return str.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+};
+
+var getContentsRegExp = function(start, end){
+  return new RegExp('\\s*'+ escapeRegExp(start) +'(.+)'+ escapeRegExp(end));
+};
+
 var stripUseStrict = function(str){
   return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
 };

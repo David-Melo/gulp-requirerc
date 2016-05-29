@@ -16,13 +16,13 @@ var stripDefineStatement = function(str){
   return str;
 };
 
-var replaceInstructionBlock = function(str, opts){
+var replaceInstructionBlock = function(str, sub, opts){
   return str;
 };
 
 module.exports = {
   build:function(debug, name, url, code){
-    code = replaceInstructionBlock(code, { start:'RCExcludeStart', end:'RCExcludeEnd' });
+    code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
     code = stripUseStrict(code);
     code = stripModuleReturn(code);
     code = stripModuleClosure(code);

@@ -34,7 +34,7 @@ var stripModuleClosure = function(str){
 };
 
 var stripModuleStatement = function(str){
-  // replace(\s*define\s*\((.+)\)(;?)+, $1);
+  // str = str.replace((define\s*\()((?:.|\n)*)(\)\s*;?), '$2');
   return store(stripDefineStatement, str);
 };
 

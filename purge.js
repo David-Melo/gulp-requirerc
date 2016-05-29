@@ -10,32 +10,32 @@ var escapeRegExp = function(str){
   return str.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
 };
 
-var contentsRegExp = function(opts){
+var blockContentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
   var expression = '('+ start +')((?:.|\\n)*)('+ end +')';
   return new RegExp(expression, opts.flags);
 };
 
-var execContents = function(str, opts){
-  var re = contentsRegExp(opts);
+var execBlockContents = function(str, opts){
+  var re = blockContentsRegExp(opts);
   return re.exec(str) || [];
 };
 
-var getMatch = function(str, opts){
-  return execContents(str, opts)[0] || '';
+var getBlockMatch = function(str, opts){
+  return execBlockContents(str, opts)[0] || '';
 };
 
-var getStatement = function(str, opts){
-  return execContents(str, opts)[1] || '';
+var getBlockStatement = function(str, opts){
+  return execBlockContents(str, opts)[1] || '';
 };
 
-var getContents = function(str, opts){
-  return execContents(str, opts)[2] || '';
+var getBlockContents = function(str, opts){
+  return execBlockContents(str, opts)[2] || '';
 };
 
-var getClosure = function(str, opts){
-  return execContents(str, opts)[3] || '';
+var getBlockClosure = function(str, opts){
+  return execBlockContents(str, opts)[3] || '';
 };
 
 var findRequireMethodBlock = function(fn, str, opts){
@@ -47,19 +47,19 @@ var findRequireMethodBlock = function(fn, str, opts){
 };
 
 var getRequireMatch = function(str){
-  return findRequireMethodBlock(getMatch, str);
+  return findRequireMethodBlock(getBlockMatch, str);
 };
 
 var getRequireStatement = function(str){
-  return findRequireMethodBlock(getStatement, str);
+  return findRequireMethodBlock(getBlockStatement, str);
 };
 
 var getRequireContent = function(str){
-  return findRequireMethodBlock(getContents, str);
+  return findRequireMethodBlock(getBlockContents, str);
 };
 
 var getRequireClosure = function(str){
-  return findRequireMethodBlock(getClosure, str);
+  return findRequireMethodBlock(getBlockClosure, str);
 };
 
 var findDefineMethodBlock = function(fn, str, opts){
@@ -71,26 +71,26 @@ var findDefineMethodBlock = function(fn, str, opts){
 };
 
 var getDefineMatch = function(str){
-  return findDefineMethodBlock(getMatch, str);
+  return findDefineMethodBlock(getBlockMatch, str);
 };
 
 var getDefineStatement = function(str){
-  return findDefineMethodBlock(getStatement, str);
+  return findDefineMethodBlock(getBlockStatement, str);
 };
 
 var getDefineContent = function(str){
-  return findDefineMethodBlock(getContents, str);
+  return findDefineMethodBlock(getBlockContents, str);
 };
 
 var getDefineClosure = function(str){
-  return findDefineMethodBlock(getClosure, str);
+  return findDefineMethodBlock(getBlockClosure, str);
 };
 
 var replaceUseStrict = function(str, sub){
   return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/gi, sub);
 };
 
-var stripWrapperReturns = function(str){
+var stripBlockReturns = function(str){
   return str;
 };
 
@@ -102,7 +102,7 @@ module.exports = {
   build:function(debug, name, url, code){
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
     code = replaceUseStrict(code, '');
-    code = stripWrapperReturns(code);
+    code = stripBlockReturns(code);
     return code;
   },
 

@@ -90,6 +90,10 @@ var replaceUseStrict = function(str, sub){
   return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/gi, sub);
 };
 
+var stripWrapperReturns = function(str){
+  return str;
+};
+
 var replaceInstructionBlock = function(str, sub, opts){
   return store(replaceInstructionBlock, str);
 };
@@ -98,6 +102,7 @@ module.exports = {
   build:function(debug, name, url, code){
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
     code = replaceUseStrict(code, '');
+    code = stripWrapperReturns(code);
     return code;
   },
 

@@ -49,6 +49,7 @@ gulp.task('scripts', function(){
     preview:true, // extra option
     outDir:'bundle', // extra option
     outSuffix:'.min' // extra option
+    purge:true // extra option (not available yet)
   }));
 });
 ```

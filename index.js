@@ -1,7 +1,6 @@
 'use strict';
 
-// Wiper.
-var amdel = require('./amdel');
+var purge = require('./purge');
 
 // File I/O is provided by simple wrappers around standard POSIX functions.
 // @see https://nodejs.org/api/fs.html
@@ -58,10 +57,10 @@ function exec(opts, file, callback){
       if(typeof onWrite === 'function'){
         contents = onWrite(name, path, contents);
       }
-      return opts.purge? amdel.build(opts.preview, name, path, contents) : contents;
+      return opts.purge? purge.build(opts.preview, name, path, contents) : contents;
     },
     onModuleBundleComplete:function(file){
-      return opts.purge? amdel.bundle(fs, file) : onBundled(file);
+      return opts.purge? purge.bundle(fs, file) : onBundled(file);
     }
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);

@@ -14,6 +14,7 @@ var contentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
   var expression = '('+ start +')((?:.|\\n)*)('+ end +')';
+  console.log('expression:', expression);
   return new RegExp(expression, opts.flags);
 };
 
@@ -62,20 +63,8 @@ var getDefineClosure = function(str){
   return findDefineMethodBlock(getClosure, str);
 };
 
-var stripUseStrict = function(str){
-  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/gi, '');
-};
-
-var stripModuleReturn = function(str){
-  return store(stripModuleReturn, str);
-};
-
-var stripModuleClosure = function(str){
-  return store(stripModuleClosure, str);
-};
-
-var stripModuleStatement = function(str){
-  return store(stripDefineStatement, str);
+var replaceUseStrict = function(str, sub){
+  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/gi, sub);
 };
 
 var replaceInstructionBlock = function(str, sub, opts){
@@ -85,10 +74,7 @@ var replaceInstructionBlock = function(str, sub, opts){
 module.exports = {
   build:function(debug, name, url, code){
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
-    code = stripModuleStatement(code);
-    code = stripUseStrict(code);
-    code = stripModuleReturn(code);
-    code = stripModuleClosure(code);
+    code = replaceUseStrict(code, '');
     return code;
   },
 

@@ -1,13 +1,18 @@
 'use strict';
 
 module.exports = {
-  modules:[],
-  build:function(name, path, contents){
-    this.modules.push({ name:name, path:path, contents:contents });
-    return contents;
+  build:function(debug, name, url, code){
+    return code;
   },
-  bundle:function(file){
-    this.modules = [];
+
+  readFile:function(fs, filepath){
+    return fs.readFileSync(filepath, { encoding:'utf8' });
+  },
+
+  bundle:function(fs, file){
+    var filepath = file.path;
+    file = this.readFile(fs, filepath);
+    fs.writeFileSync(filepath, file);
     return file;
   }
 };

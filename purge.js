@@ -19,7 +19,7 @@ var stripModuleClosure = function(str){
   return store(stripModuleClosure, str);
 };
 
-var stripDefineStatement = function(str){
+var stripModuleStatement = function(str){
   return store(stripDefineStatement, str);
 };
 
@@ -30,7 +30,7 @@ var replaceInstructionBlock = function(str, sub, opts){
 module.exports = {
   build:function(debug, name, url, code){
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
-    code = stripDefineStatement(code);
+    code = stripModuleStatement(code);
     code = stripUseStrict(code);
     code = stripModuleReturn(code);
     code = stripModuleClosure(code);

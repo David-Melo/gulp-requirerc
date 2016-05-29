@@ -10,8 +10,15 @@ var escapeRegExp = function(str){
   return str.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
 };
 
-var getContentsRegExp = function(start, end){
-  return new RegExp('\\s*'+ escapeRegExp(start) +'(.+)'+ escapeRegExp(end));
+var getContentsRegExp = function(opts){
+  var start = opts.escape? escapeRegExp(opts.start) : opts.start;
+  var end = opts.escape? escapeRegExp(opts.end) : opts.end;
+  return new RegExp('\\s*'+ start +'(.+)'+ end);
+};
+
+var getContents = function(str, opts){
+  str = str.match(getContentsRegExp(opts)) || [];
+  return str[1] || '';
 };
 
 var stripUseStrict = function(str){

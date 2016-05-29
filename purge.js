@@ -1,28 +1,36 @@
 'use strict';
 
+var store = function(fn, value){
+  fn.storage = Array.isArray(fn.storage)? fn.storage : [];
+  fn.storage.push(value);
+  return fn.storage[fn.storage.length - 1];
+};
+
 var stripUseStrict = function(str){
-  return str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
+  str = str.replace(/[^{]*(\'|\")use\sstrict(\'|\")\s*;*/g, '');
+  return store(stripUseStrict, str);
 };
 
 var stripModuleReturn = function(str){
-  return str;
+  return store(stripModuleReturn, str);
 };
 
 var stripModuleClosure = function(str){
-  return str;
+  return store(stripModuleClosure, str);
 };
 
 var stripDefineStatement = function(str){
-  return str;
+  return store(stripDefineStatement, str);
 };
 
 var replaceInstructionBlock = function(str, sub, opts){
-  return str;
+  return store(replaceInstructionBlock, str);
 };
 
 module.exports = {
   build:function(debug, name, url, code){
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
+    code = stripDefineStatement(code);
     code = stripUseStrict(code);
     code = stripModuleReturn(code);
     code = stripModuleClosure(code);

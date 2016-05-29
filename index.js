@@ -27,14 +27,11 @@ function cmd(call, opts){
   return call.join(' ');
 }
 
-// AMD builder
-function build(name, path, contents){
-  return contents;
-}
-
 // AMD cleaner
-function purge(contents){
-  return new require('./amdel')(contents);
+function purge(file){
+  var amdel = require('./amdel');
+  var out = fs.readFileSync(file.path, { encoding:'utf8' })
+  fs.writeFileSync(file.path, amdel(out));
 }
 
 // Documentation from RequireJS in node.
@@ -50,16 +47,17 @@ function exec(opts, file, callback){
   var baseUrl = path.relative('./', directory);
   var mainConfigFile = path.join(baseUrl, name + extension);
   var out = path.join(baseUrl, dest, name + suffix + extension);
+  var bundled = opts.onModuleBundleComplete;
   if(fileExclusionRegExp.test(file.path)) return void(0);
+  delete(opts.onModuleBundleComplete);
   opts = Object.assign({
     out:out,
     name:name,
     baseUrl:baseUrl,
     mainConfigFile:mainConfigFile,
     fileExclusionRegExp:fileExclusionRegExp,
-    onBuildWrite:function(name, path, contents){
-      var dirty = opts.onBuildWrite(name, path, contents);
-      return opts.purge? purge(dirty) : dirty;
+    onModuleBundleComplete:function(file){
+      return opts.purge? purge(file) : bundled(file);
     }
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
@@ -81,7 +79,6 @@ function writeStream(opts, file, callback){
 function requirerc(opts){
   opts = Object.assign({}, opts);
   opts.baseUrl = opts.baseUrl || './';
-  opts.onBuildWrite = typeof opts.onBuildWrite === 'function'? opts.onBuildWrite : build;
   opts.cjsTranslate = !!opts.purge || opts.cjsTranslate;
   return eventStream.mapSync(writeStream.bind(this, opts));
 }

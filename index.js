@@ -33,8 +33,8 @@ function build(name, path, contents){
 }
 
 // AMD cleaner
-function purge(opts, dirtyc, name, path, contents){
-  return dirtyc;
+function purge(contents){
+  return new require('./amdel')(contents);
 }
 
 // Documentation from RequireJS in node.
@@ -59,7 +59,7 @@ function exec(opts, file, callback){
     fileExclusionRegExp:fileExclusionRegExp,
     onBuildWrite:function(name, path, contents){
       var dirty = opts.onBuildWrite(name, path, contents);
-      return opts.purge? purge(dirty, name, path, contents) : dirty;
+      return opts.purge? purge(dirty) : dirty;
     }
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
@@ -82,6 +82,7 @@ function requirerc(opts){
   opts = Object.assign({}, opts);
   opts.baseUrl = opts.baseUrl || './';
   opts.onBuildWrite = typeof opts.onBuildWrite === 'function'? opts.onBuildWrite : build;
+  opts.cjsTranslate = !!opts.purge? true : opts.cjsTranslate;
   return eventStream.mapSync(writeStream.bind(this, opts));
 }
 

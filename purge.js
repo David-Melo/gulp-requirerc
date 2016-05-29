@@ -10,17 +10,32 @@ var escapeRegExp = function(str){
   return str.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
 };
 
-var getContentsRegExp = function(opts){
+var contentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
   var expression = start +'((?:.|\\n)*)'+ end;
   return new RegExp(expression, opts.flags);
 };
 
+var execContents = function(str, opts){
+  var re = contentsRegExp(opts);
+  return re.exec(str) || [];
+};
+
+var getMatch = function(str, opts){
+  return execContents(str, opts)[0] || '';
+};
+
+var getStatement = function(str, opts){
+  return execContents(str, opts)[1] || '';
+};
+
 var getContents = function(str, opts){
-  var re = getContentsRegExp(opts);
-  str = (re.exec(str) || [])[2] || '';
-  return str;
+  return execContents(str, opts)[2] || '';
+};
+
+var getClosure = function(str, opts){
+  return execContents(str, opts)[3] || '';
 };
 
 var stripUseStrict = function(str){

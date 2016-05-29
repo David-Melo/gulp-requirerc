@@ -100,6 +100,7 @@ var replaceInstructionBlock = function(str, sub, opts){
 
 module.exports = {
   build:function(debug, name, url, code){
+    store(this.build, { debug:debug, name:name, url:url, code:code });
     code = replaceInstructionBlock(code, '', { start:'RCExcludeStart', end:'RCExcludeEnd' });
     code = replaceUseStrict(code, '');
     code = stripBlockReturns(code);

@@ -13,12 +13,13 @@ var escapeRegExp = function(str){
 var getContentsRegExp = function(opts){
   var start = opts.escape? escapeRegExp(opts.start) : opts.start;
   var end = opts.escape? escapeRegExp(opts.end) : opts.end;
-  return new RegExp('\\s*'+ start +'([\\s\\S]*?)'+ end, opts.flags);
+  var expression = start +'((?:.|\\n)*)'+ end;
+  return new RegExp(expression, opts.flags);
 };
 
 var getContents = function(str, opts){
-  str = str.match(getContentsRegExp(opts)) || [];
-  return str[1] || '';
+  str = getContentsRegExp(opts).exec(str) || [];
+  return str[2] || '';
 };
 
 var stripUseStrict = function(str){

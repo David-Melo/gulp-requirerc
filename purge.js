@@ -38,6 +38,14 @@ var getClosure = function(str, opts){
   return execContents(str, opts)[3] || '';
 };
 
+var getDefineMatch = function(str){
+  return getMatch(str, {
+    start:'define\\s*\\(\\s*[^{]*?\\{',
+    end:'\\}\\s*\\)\\s*;?',
+    flags:'g'
+  });
+};
+
 var getDefineStatement = function(str){
   return getStatement(str, {
     start:'define\\s*\\(\\s*[^{]*?\\{',

@@ -68,7 +68,16 @@ function exec(opts, file, callback){
   }, opts);
   Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
   opts.preview && console.log(cmd('node r.js -o', opts));
-  requirejs.optimize(opts);
+  requirejs.optimize(opts, function (buildResponse) {
+    var contents = fs.readFileSync(opts.out, 'utf8');
+    if (typeof opts.onOptimize === 'function') {
+      opts.onOptimize(null, contents, opts);
+    }
+  }, function(err) {
+    if (typeof opts.onOptimize === 'function') {
+      opts.onOptimize(err);
+    }
+  });
 }
 
 // File I/O is provided by simple wrappers around standard POSIX functions.

@@ -94,7 +94,8 @@ requirerc.util = {
   fs:fs,
   path:path,
   eventStream:eventStream,
-  r:requirejs
+  r:requirejs,
+  noop:noop
 };
 
 // Externalize `gulp-requirerc` module.

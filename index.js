@@ -18,6 +18,9 @@ var eventStream = require('event-stream');
 // @see https://www.npmjs.com/package/requirejs
 var requirejs = require('requirejs');
 
+// Computer protocol command that does nothing
+var noop = function(){/* no operations*/};
+
 // Method that helps to assemble the call and parameters for debugging.
 function cmd(call, opts){
   call = [call];
@@ -42,7 +45,7 @@ function exec(opts, file, callback){
   var mainConfigFile = path.join(baseUrl, name + extension);
   var dest = typeof opts.outDir === 'string' ? opts.outDir : baseUrl;
   var out = path.join(dest, name + suffix + extension);
-  var onBundled = opts.onModuleBundleComplete;
+  var onBundled = typeof opts.onModuleBundleComplete === 'function' ? opts.onModuleBundleComplete : noop;
   var onWrite = opts.onBuildWrite;
   if(fileExclusionRegExp.test(file.path)) return void(0);
   delete(opts.onModuleBundleComplete);

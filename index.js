@@ -10,6 +10,10 @@ var fs = require('fs');
 // @see https://nodejs.org/api/path.html
 var path = require('path');
 
+// Utility functions for gulp plugins.
+// @see https://www.npmjs.com/package/gulp-util
+var gutil = require('gulp-util');
+
 // Construct pipes of streams of events.
 // @see https://www.npmjs.com/package/event-stream
 var eventStream = require('event-stream');
@@ -20,6 +24,11 @@ var requirejs = require('requirejs');
 
 // Computer protocol command that does nothing
 var noop = function(){/* no operations*/};
+
+// The PluginError object represents an error when a value is not of the expected type.
+function throwError(message) {
+  throw new gutil.PluginError('gulp-requirerc', message, { showStack: true });
+}
 
 // Method that helps to assemble the call and parameters for debugging.
 function cmd(call, opts){

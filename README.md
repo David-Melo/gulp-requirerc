@@ -41,15 +41,15 @@ var requirerc = require('gulp-requirerc');
 // All configuration options.
 // @see https://github.com/requirejs/r.js/blob/master/build/example.build.js
 gulp.task('scripts', function(){
-  return gulp.src('source/scripts/*.js').pipe(requirerc({
-    baseUrl:'static/scripts',
-    uglify2:{ warnings:true },
-    optimize:'uglify2',
-    generateSourceMaps:true,
-    preview:true, // extra option
-    outDir:'bundle', // extra option
-    outSuffix:'.min' // extra option
-    purge:true // extra option (not available yet)
+  return gulp.src('source/scripts/*-config.js').pipe(requirerc({
+    baseUrl: 'static/scripts',
+    uglify2: { warnings: true },
+    optimize: 'uglify2',
+    generateSourceMaps: true,
+    preview: true, // extra option
+    outDir: 'bundle', // extra option
+    outSuffix: '.min' // extra option
+    purge: true // extra option (not available yet)
   }));
 });
 ```

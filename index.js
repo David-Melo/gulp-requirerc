@@ -4,7 +4,7 @@ var purge = require('./purge');
 
 // File I/O is provided by simple wrappers around standard POSIX functions.
 // @see https://nodejs.org/api/fs.html
-var fs = require('fs');
+var fs = require('fs-extra');
 
 // This module contains utilities for handling and transforming file paths.
 // @see https://nodejs.org/api/path.html
@@ -110,6 +110,7 @@ function writeStream(settings, file, callback) {
   exec(opts, function onExec(err, outputFile) {
     if (err) callback(createError(err));
     if (opts.preview) console.log(cmd('node r.js -o', opts));
+    fs.ensureDirSync(path.join(outputFile.cwd, path.dirname(outputFile.path)));
     var stream = fs.createWriteStream(outputFile.path);
     stream.write(outputFile.contents, '', callback);
   });

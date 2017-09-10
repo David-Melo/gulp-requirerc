@@ -96,7 +96,7 @@ function exec(opts, done) {
     output = text;
     sourceMapOutput = sourceMapText;
   };
-  requirejs.optimize(opts, function onOptimizeResolve(buildResponse) {
+  requirerc.compiler(opts, function onOptimizeResolve(buildResponse) {
     var file = createFile(filename, output, buildResponse, sourceMapOutput);
     done(null, file, opts);
   }, done);
@@ -107,16 +107,12 @@ function exec(opts, done) {
 // @see https://nodejs.org/api/fs.html#fs_class_fs_writestream
 function writeStream(settings, file, callback) {
   var opts = config(file, settings);
-  var stream = eventStream.pause();
   exec(opts, function onExec(err, outputFile) {
     if (err) callback(createError(err));
     if (opts.preview) console.log(cmd('node r.js -o', opts));
-    stream.write(outputFile);
-    stream.resume();
-    stream.end();
-    callback(null, outputFile);
+    var stream = fs.createWriteStream(outputFile.path);
+    stream.write(outputFile.contents, '', callback);
   });
-  return stream;
 }
 
 // Gulp adapter for RequireJS.
@@ -133,9 +129,19 @@ requirerc.util = {
   fs: fs,
   path: path,
   eventStream: eventStream,
-  r: requirejs,
   noop: noop
 };
+
+
+// Log errors nicely.
+requirerc.logError = function logError(error) {
+  var message = createError(error.messageFormatted).toString();
+  process.stderr.write(message + '\n');
+  this.emit('end');
+};
+
+// Store compiler in a prop.
+requirerc.compiler = requirejs.optimize;
 
 // Externalize `gulp-requirerc` module.
 module.exports = requirerc;

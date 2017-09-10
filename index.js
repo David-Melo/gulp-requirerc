@@ -133,7 +133,6 @@ requirerc.util = {
   noop: noop
 };
 
-
 // Log errors nicely.
 requirerc.logError = function logError(error) {
   var message = createError(error.messageFormatted).toString();

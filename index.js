@@ -96,7 +96,7 @@ function exec(opts, done) {
     output = text;
     sourceMapOutput = sourceMapText;
   };
-  requirerc.compiler(opts, function onOptimizeResolve(buildResponse) {
+  requirerc.compiler.optimize(opts, function onOptimizeResolve(buildResponse) {
     var file = createFile(filename, output, buildResponse, sourceMapOutput);
     done(null, file, opts);
   }, done);
@@ -105,14 +105,14 @@ function exec(opts, done) {
 // File I/O is provided by simple wrappers around standard POSIX functions.
 // @see https://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options
 // @see https://nodejs.org/api/fs.html#fs_class_fs_writestream
-function writeStream(settings, file, callback) {
-  var opts = config(file, settings);
+function writeStream(opts, file, callback) {
   exec(opts, function onExec(err, outputFile) {
     if (err) callback(createError(err));
     if (opts.preview) console.log(cmd('node r.js -o', opts));
     fs.ensureDirSync(path.join(outputFile.cwd, path.dirname(outputFile.path)));
     var stream = fs.createWriteStream(outputFile.path);
-    stream.write(outputFile.contents, '', callback);
+    stream.write(outputFile.contents);
+    callback(null, outputFile);
   });
 }
 
@@ -120,7 +120,27 @@ function writeStream(settings, file, callback) {
 // @see https://www.npmjs.com/package/requirejs
 // @see https://www.npmjs.com/package/gulp-requirerc
 function requirerc(settings) {
-  return eventStream.mapSync(writeStream.bind(this, settings));
+  if (typeof options !== 'function') {
+    settings = function() {
+      return settings;
+    };
+  }
+  return eventStream.through(function onTransform(file, encoding, done) {
+    var opts = config(file, settings(file, encoding));
+    if (typeof opts.out !== 'string') {
+      return done(createError('If `out` is supplied, it must be a string'));
+    }
+    if (file.isNull()) {
+      return done(null, file);
+    }
+    if (file.isStream()) {
+      return done(createError('Streaming not supported'));
+    }
+    if (typeof opts !== 'object') {
+      return done(createError('Options function must produce an options object'));
+    }
+    writeStream(opts, file, encoding, done);
+  });
 }
 
 // Externalize dependencies.
@@ -141,7 +161,7 @@ requirerc.logError = function logError(error) {
 };
 
 // Store compiler in a prop.
-requirerc.compiler = requirejs.optimize;
+requirerc.compiler = requirejs;
 
 // Externalize `gulp-requirerc` module.
 module.exports = requirerc;

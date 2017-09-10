@@ -15,8 +15,8 @@ var path = require('path');
 var gutil = require('gulp-util');
 
 // Construct pipes of streams of events.
-// @see https://www.npmjs.com/package/event-stream
-var eventStream = require('event-stream');
+// @see https://www.npmjs.com/package/through2
+var through = require('through2');
 
 // Node adapter for RequireJS, for loading AMD modules. Includes RequireJS optimizer.
 // @see https://www.npmjs.com/package/requirejs
@@ -125,7 +125,7 @@ function requirerc(settings) {
       return settings;
     };
   }
-  return eventStream.through(function onTransform(file, encoding, done) {
+  return through.obj(function onTransform(file, encoding, done) {
     var opts = config(file, settings(file, encoding));
     if (typeof opts.out !== 'string') {
       return done(createError('If `out` is supplied, it must be a string'));
@@ -149,7 +149,7 @@ requirerc.util = {
   purge: purge,
   fs: fs,
   path: path,
-  eventStream: eventStream,
+  through: through,
   noop: noop
 };
 

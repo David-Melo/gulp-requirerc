@@ -19,7 +19,7 @@
   "dependencies": {
     "fs-extra": "latest",
     "gulp-util": "latest",
-    "event-stream": "latest",
+    "through2": "latest",
     "requirejs": "latest"
   },
   "scripts": {

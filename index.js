@@ -23,18 +23,63 @@ var eventStream = require('event-stream');
 var requirejs = require('requirejs');
 
 // Computer protocol command that does nothing
-var noop = function(){/* no operations*/};
+var noop = Function.prototype;
 
 // The PluginError object represents an error when a value is not of the expected type.
-function throwError(message) {
-  throw new gutil.PluginError('gulp-requirerc', message, { showStack: true });
+// @see https://www.npmjs.com/package/gulp-util#new-pluginerrorpluginname-message-options
+function createError(message) {
+  return new gutil.PluginError('gulp-requirerc', message, { showStack: true });
+}
+
+// Method that creates a virtual file format.
+// @see https://www.npmjs.com/package/gulp-util#new-fileobj
+function createFile(filename, output, buildResponse, sourceMap) {
+  var newFile = new gutil.File({ path: filename, contents: new Buffer(output) });
+  newFile.buildResponse = buildResponse.replace('FUNCTION', filename);
+  if (sourceMap) newFile.sourceMap = JSON.parse(sourceMap);
+  return newFile;
+}
+
+// All configuration options.
+// @see https://github.com/requirejs/r.js/blob/master/build/example.build.js
+function config(file, settings) {
+  var opts = Object.assign({}, settings);
+  var extension = path.extname(file.path);
+  var name = path.basename(file.path, extension);
+  var directory = path.dirname(file.path, extension);
+  var optimize = /^(undefined|null|none)$/.test(opts.optimize) ? 'none' : opts.optimize;
+  var suffix = typeof opts.outSuffix === 'string' ? opts.outSuffix : '.bundle';
+  var fileExclusionRegExp = new RegExp(purge.escapeRegExp(suffix) + purge.escapeRegExp(extension) +'$');
+  var baseUrl = typeof opts.baseUrl === 'string' ? opts.baseUrl : path.relative('.', directory);
+  var outDir = typeof opts.outDir === 'string' ? opts.outDir : baseUrl;
+  var out = typeof opts.out === 'string' ? opts.out : path.join(outDir, name + suffix + extension);
+  var onBundle = typeof opts.onModuleBundleComplete === 'function' ? opts.onModuleBundleComplete : noop;
+  var onWrite = typeof opts.onBuildWrite === 'function' ? opts.onBuildWrite : null;
+  var preview = !!opts.preview;
+  opts.optimize = optimize;
+  opts.name = typeof opts.name === 'string' ? opts.name : name;
+  opts.baseUrl = baseUrl;
+  opts.mainConfigFile = typeof opts.mainConfigFile === 'string' ? opts.mainConfigFile : path.join(baseUrl, name + extension);
+  opts.fileExclusionRegExp = typeof opts.fileExclusionRegExp === 'regexp' ? opts.fileExclusionRegExp : fileExclusionRegExp;
+  opts.out = out;
+  if (Array.isArray(opts.include) && opts.include.length) {
+    opts.include.push(opts.name);
+  }
+  opts.onBuildWrite = function onBuildWrite(name, path, contents) {
+    if (onWrite) contents = onWrite(name, path, contents);
+    return opts.purge ? purge.build(preview, name, path, contents) : contents;
+  };
+  opts.onModuleBundleComplete = function onModuleBundleComplete(outputFile) {
+    return opts.purge ? purge.bundle(fs, outputFile) : onBundle(outputFile);
+  };
+  return opts;
 }
 
 // Method that helps to assemble the call and parameters for debugging.
-function cmd(call, opts){
+function cmd(call, opts) {
   call = [call];
-  for(var key in opts){
-    if(opts.hasOwnProperty(key)){
+  for (var key in opts) {
+    if (opts.hasOwnProperty(key)) {
       call.push([key,'=', JSON.stringify(opts[key])].join(''));
     }
   }
@@ -43,77 +88,53 @@ function cmd(call, opts){
 
 // Documentation from RequireJS in node.
 // @see http://requirejs.org/docs/node.html
-function exec(opts, file, callback){
-  var optimize = !/undefined|none/.test(String(opts.optimize));
-  var extension = path.extname(file.path);
-  var name = path.basename(file.path, extension);
-  var directory = path.dirname(file.path, extension);
-  var suffix = typeof opts.outSuffix === 'string'? opts.outSuffix : '.bundle';
-  var fileExclusionRegExp = new RegExp('(\\'+ suffix +'\\'+ extension +')$');
-  var baseUrl = path.relative('./', directory);
-  var mainConfigFile = path.join(baseUrl, name + extension);
-  var dest = typeof opts.outDir === 'string' ? opts.outDir : baseUrl;
-  var out = path.join(dest, name + suffix + extension);
-  var onBundled = typeof opts.onModuleBundleComplete === 'function' ? opts.onModuleBundleComplete : noop;
-  var onWrite = opts.onBuildWrite;
-  if(fileExclusionRegExp.test(file.path)) return void(0);
-  delete(opts.onModuleBundleComplete);
-  delete(opts.onBuildWrite);
-  opts = Object.assign({
-    out:out,
-    name:name,
-    baseUrl:baseUrl,
-    mainConfigFile:mainConfigFile,
-    fileExclusionRegExp:fileExclusionRegExp,
-    onBuildWrite:function(name, path, contents){
-      if(typeof onWrite === 'function'){
-        contents = onWrite(name, path, contents);
-      }
-      return opts.purge? purge.build(opts.preview, name, path, contents) : contents;
-    },
-    onModuleBundleComplete:function(file){
-      return opts.purge? purge.bundle(fs, file) : onBundled(file);
-    }
-  }, opts);
-  Array.isArray(opts.include) && opts.include.length && opts.include.push(name);
-  opts.preview && console.log(cmd('node r.js -o', opts));
-  requirejs.optimize(opts, function (buildResponse) {
-    var contents = fs.readFileSync(opts.out, 'utf8');
-    if (typeof opts.onOptimize === 'function') {
-      opts.onOptimize(null, contents, opts);
-    }
-  }, function(err) {
-    if (typeof opts.onOptimize === 'function') {
-      opts.onOptimize(err);
-    }
-  });
+function exec(opts, done) {
+  var filename = opts.out;
+  var output = null;
+  var sourceMapOutput = null;
+  opts.out = function out(text, sourceMapText) {
+    output = text;
+    sourceMapOutput = sourceMapText;
+  };
+  requirejs.optimize(opts, function onOptimizeResolve(buildResponse) {
+    var file = createFile(filename, output, buildResponse, sourceMapOutput);
+    done(null, file, opts);
+  }, done);
 }
 
 // File I/O is provided by simple wrappers around standard POSIX functions.
 // @see https://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options
 // @see https://nodejs.org/api/fs.html#fs_class_fs_writestream
-function writeStream(opts, file, callback){
-  var dest = path.join(file.cwd, opts.baseUrl, path.basename(file.path));
-  var stream = fs.createWriteStream(dest, { flags:'w' });
-  stream.write(file.contents, '', exec.bind(this, opts, file, callback));
+function writeStream(settings, file, callback) {
+  var opts = config(file, settings);
+  var stream = eventStream.pause();
+  exec(opts, function onExec(err, outputFile) {
+    if (err) callback(createError(err));
+    if (opts.preview) console.log(cmd('node r.js -o', opts));
+    stream.write(outputFile);
+    stream.resume();
+    stream.end();
+    callback(null, outputFile);
+  });
+  return stream;
 }
 
-// All configuration options.
-// @see https://github.com/requirejs/r.js/blob/master/build/example.build.js
-function requirerc(opts){
-  opts = Object.assign({}, opts);
-  opts.baseUrl = opts.baseUrl || './';
-  opts.cjsTranslate = !!opts.purge || opts.cjsTranslate;
-  return eventStream.mapSync(writeStream.bind(this, opts));
+// Gulp adapter for RequireJS.
+// @see https://www.npmjs.com/package/requirejs
+// @see https://www.npmjs.com/package/gulp-requirerc
+function requirerc(settings) {
+  return eventStream.mapSync(writeStream.bind(this, settings));
 }
 
 // Externalize dependencies.
 requirerc.util = {
-  fs:fs,
-  path:path,
-  eventStream:eventStream,
-  r:requirejs,
-  noop:noop
+  gulp: gutil,
+  purge: purge,
+  fs: fs,
+  path: path,
+  eventStream: eventStream,
+  r: requirejs,
+  noop: noop
 };
 
 // Externalize `gulp-requirerc` module.

@@ -17,6 +17,7 @@
     "url": "https://github.com/adriancmiranda/gulp-requirerc/issues"
   },
   "dependencies": {
+    "through2": "latest",
     "gulp-util": "latest",
     "event-stream": "latest",
     "requirejs": "latest"

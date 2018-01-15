@@ -121,7 +121,7 @@ function writeStream(opts, file, callback) {
 // @see https://www.npmjs.com/package/requirejs
 // @see https://www.npmjs.com/package/gulp-requirerc
 function requirerc(settings) {
-  if (typeof options !== 'function') {
+  if (typeof settings !== 'function') {
     settings = function() {
       return settings;
     };

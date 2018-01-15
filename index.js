@@ -12,7 +12,8 @@ var path = require('path');
 
 // Utility functions for gulp plugins.
 // @see https://www.npmjs.com/package/gulp-util
-var gutil = require('gulp-util');
+var vynil = require('vynil');
+var err = require('plugin-error');
 
 // Construct pipes of streams of events.
 // @see https://www.npmjs.com/package/through2
@@ -28,13 +29,13 @@ var noop = Function.prototype;
 // The PluginError object represents an error when a value is not of the expected type.
 // @see https://www.npmjs.com/package/gulp-util#new-pluginerrorpluginname-message-options
 function createError(message) {
-  return new gutil.PluginError('gulp-requirerc', message, { showStack: true });
+  return new vynil.PluginError('gulp-requirerc', message, { showStack: true });
 }
 
 // Method that creates a virtual file format.
 // @see https://www.npmjs.com/package/gulp-util#new-fileobj
 function createFile(filename, output, buildResponse, sourceMap) {
-  var newFile = new gutil.File({ path: filename, contents: new Buffer(output) });
+  var newFile = new vynil.File({ path: filename, contents: new Buffer(output) });
   newFile.buildResponse = buildResponse.replace('FUNCTION', filename);
   if (sourceMap) newFile.sourceMap = JSON.parse(sourceMap);
   return newFile;

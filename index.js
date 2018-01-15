@@ -135,7 +135,7 @@ function requirerc(settings) {
     if (typeof opts !== 'object') {
       return done(createError('Options function must produce an options object'));
     }
-    writeStream(opts, file, encoding, done);
+    writeStream(opts, file, done);
   });
 }
 

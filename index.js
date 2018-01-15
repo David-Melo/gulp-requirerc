@@ -121,13 +121,8 @@ function writeStream(opts, file, callback) {
 // @see https://www.npmjs.com/package/requirejs
 // @see https://www.npmjs.com/package/gulp-requirerc
 function requirerc(settings) {
-  if (typeof settings !== 'function') {
-    settings = function() {
-      return settings;
-    };
-  }
   return through.obj(function onTransform(file, encoding, done) {
-    var opts = config(file, settings(file, encoding));
+    var opts = config(file, settings);
     if (typeof opts.out !== 'string') {
       return done(createError('If `out` is supplied, it must be a string'));
     }

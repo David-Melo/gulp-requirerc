@@ -29,13 +29,13 @@ var noop = Function.prototype;
 // The PluginError object represents an error when a value is not of the expected type.
 // @see https://www.npmjs.com/package/gulp-util#new-pluginerrorpluginname-message-options
 function createError(message) {
-  return new err.PluginError('gulp-requirerc', message, { showStack: true });
+  return new err('gulp-requirerc', message, { showStack: true });
 }
 
 // Method that creates a virtual file format.
 // @see https://www.npmjs.com/package/gulp-util#new-fileobj
 function createFile(filename, output, buildResponse, sourceMap) {
-  var newFile = new vinyl.File({ path: filename, contents: new Buffer(output) });
+  var newFile = new vinyl({ path: filename, contents: new Buffer(output) });
   newFile.buildResponse = buildResponse.replace('FUNCTION', filename);
   if (sourceMap) newFile.sourceMap = JSON.parse(sourceMap);
   return newFile;

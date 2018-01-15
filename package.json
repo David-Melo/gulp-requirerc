@@ -1,24 +1,25 @@
 {
   "name": "gulp-requirerc",
   "main": "index.js",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Gulp adapter for RequireJS",
   "license": "MIT",
-  "homepage": "https://github.com/adriancmiranda/gulp-requirerc",
+  "homepage": "https://github.com/David-Melo/gulp-requirerc",
   "author": {
-    "name": "Adrian C. Miranda",
-    "url": "https://github.com/adriancmiranda"
+    "name": "David-Melo",
+    "url": "https://github.com/David-Melo"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/adriancmiranda/gulp-requirerc.git"
+    "url": "git://github.com/David-Melo/gulp-requirerc.git"
   },
   "bugs": {
-    "url": "https://github.com/adriancmiranda/gulp-requirerc/issues"
+    "url": "https://github.com/David-Melo/gulp-requirerc/issues"
   },
   "dependencies": {
     "fs-extra": "latest",
-    "gulp-util": "latest",
+    "plugin-error": "latest",
+    "vinyl" :"latest",
     "through2": "latest",
     "requirejs": "latest"
   },

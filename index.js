@@ -146,7 +146,6 @@ function requirerc(settings) {
 
 // Externalize dependencies.
 requirerc.util = {
-  gulp: gutil,
   purge: purge,
   fs: fs,
   path: path,
